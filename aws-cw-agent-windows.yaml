@@ -1,0 +1,21 @@
+---
+- name: Install CloudWatch Agent on Windows
+  hosts: windows
+  gather_facts: no
+  tasks:
+  - name: Check if CloudWatch Agent is already installed
+    win_reg_stat:
+      path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\AmazonCloudWatchAgent
+      name: DisplayName
+    register: cloudwatch_agent_installed
+
+  - name: Download CloudWatch Agent installer
+    win_get_url:
+      url: https://s3.amazonaws.com/amazoncloudwatch-agent/windows/amd64/latest/AmazonCloudWatchAgent.msi
+      dest: C:\temp\AmazonCloudWatchAgent.msi
+
+  - name: Install CloudWatch Agent
+    win_package:
+      path: C:\temp\AmazonCloudWatchAgent.msi
+      arguments: /qn
+    when: cloudwatch_agent_installed.stat.exists == False

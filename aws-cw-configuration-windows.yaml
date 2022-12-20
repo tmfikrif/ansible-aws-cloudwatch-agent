@@ -1,0 +1,15 @@
+---
+- name: Configure and start CloudWatch Agent
+  hosts: windows
+  gather_facts: no
+  tasks:
+  - name: Create CloudWatch Agent configuration file
+    win_lineinfile:
+      path: C:\ProgramData\Amazon\AmazonCloudWatchAgent\amazon-cloudwatch-agent.json
+      state: present
+      line: '{ "metrics": { "namespace": "MyApp/Metrics" } }'
+
+  - name: Start CloudWatch Agent
+    win_service:
+      name: AmazonCloudWatchAgent
+      state: started

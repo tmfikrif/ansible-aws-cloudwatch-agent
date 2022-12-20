@@ -1,0 +1,26 @@
+---
+- name: Install CloudWatch Agent on Linux
+  hosts: linux
+  gather_facts: no
+  tasks:
+  - name: Check if CloudWatch Agent is already installed
+    stat:
+      path: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent
+    register: cloudwatch_agent_installed
+
+  - name: Install CloudWatch Agent dependencies
+    package:
+      name: curl
+      state: present
+
+  - name: Download CloudWatch Agent installer
+    get_url:
+      url: https://s3.amazonaws.com/amazoncloudwatch-agent/linux/amd64/latest/amazon-cloudwatch-agent.deb
+      dest: /tmp/amazon-cloudwatch-agent.deb
+    when: cloudwatch_agent_installed.stat.exists == False
+
+  - name: Install CloudWatch Agent
+    package:
+      name: /tmp/amazon-cloudwatch-agent.deb
+      state: present
+    when: cloudwatch_agent_installed.stat.exists == False
