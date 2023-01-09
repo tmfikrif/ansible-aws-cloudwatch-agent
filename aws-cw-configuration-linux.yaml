@@ -5,6 +5,7 @@
   tasks:
   - name: Create CloudWatch Agent configuration file
     lineinfile:
+    #push json from local
       path: /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
       state: present
       line: '{ "metrics": { "namespace": "MyApp/Metrics" } }'
